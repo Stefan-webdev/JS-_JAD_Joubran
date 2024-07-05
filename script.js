@@ -329,7 +329,283 @@ The else keyword can be used to perform some other code based on all the other c
 When you have an if/else condition that returns two different results, it is possible to drop the else keyword.
 Always use triple equals (===) when comparing 2 values in JavaScript.
 
+
+CHAPTER #6 ------------------------------------------------------------------------------------------
+
+Arrays in JavaScript allow you to store multiple elements in the same variable. You can store numbers, strings, booleans, arrays, objects & more. These can be mixed within the same array.
+Here are some examples:
+
+
+const users = []; // empty array
+const grades = [10, 8, 13, 15]; // array of numbers
+const attendees = ["Sam", "Alex"]; // array of strings
+const values = [10, false, "John"]; // mixed
+
+.length property
+You can get the number of elements in an array by using the .length property. For example:
+
+
+[].length; // 0
+
+const grades = [10, 8, 13, 15];
+grades.length; // 4
+
+You can also use the .at(index) method, which accepts negative indices making it easier to find the last element of the array. Here are some examples with .at():
+
+
+const users = ["Sam", "Alex", "Charley"];
+users.at(1); //"Alex"
+users.at(-2); //"Alex"
+
+You can add an element to an array by using the .push() method.
+
+
+const numbers = [10, 8, 13, 15];
+numbers.push(20); // returns 5 (the new length of the array)
+console.log(numbers); // [10, 8, 13, 15, 20];
+
+As you can see, numbers.push(20) returns 5 which is the length of the array. This is often confusing for a lot of developers which is why we're highlighting it here.
+ .push() will add an item to the array but also return the new length of the array.
+
+
+Recap
+const data = [1, 2, 3] is an array containing 3 numbers.
+array.length returns the number of elements inside the array.
+array.push(x) allows you to add the variable x to the end of the array.
+ It also returns the new length of the array (after the push has been made).
+Arrays defined with const are not constants because you can change the elements inside of it.
+ However, you cannot re-assign them to another value thus they will always be an array.
+
+ Array forEach
+
+Last updated April 2024
+Array iteration is one of the most important concepts that you will use in JavaScript.
+
+Let's say we have an array of grades and you'd like to loop (or iterate)
+ over every item in this array.
+ Here's how you do that in JavaScript:
+
+const grades = [10, 8, 13];
+
+grades.forEach(function(grade) {
+    // do something with individual grade
+    console.log(grade);
+}
+    This callback function receives a grade and then logs it to the console. 
+    This is a function definition because it's not being executed.
+     It only defines the behavior of the function. 
+     However, this function definition is passed as an argument to the .forEach() method:
+     
+// this is the callback
+function(grade) {
+console.log(grade);
+
+Recap
+.forEach(callback) iterates over every item in an array.
+A callback is a function definition passed as a parameter to another function.
+Always start with a console.log() inside the .forEach() to visualize the shift from array to 
+array item (you can skip that when you become used to it).
+The .forEach() method will take your function definition and call it for every item of the
+ array. Every time the callback is called, the first parameter will represent the 
+corresponding array item.
+    
+Naming variables with a clear name makes it much easier for you and others to understand
+ the code. This is especially true with iteration.
+
+Thus, it's always a good idea to use the plural for the array and singular for the item of the
+ array.
+
+
+
+Chapter # 7. ---------------------------------------------------------------------------------
+
+A common array method is the .filter() method.
+ When you call this method on an array, you will get back another array that contains some of 
+ the items from the original array, based on the condition you specify. 
+Let's take an example:
+Array .Filter const numbers = [9, 5, 14, 3, 11];
+
+const numbersAboveTen = numbers.filter(function(number) {
+    return number > 10;
+});
+console.log(numbersAboveTen); // [14, 11]
+
+Recap
+The .filter() method returns a new array that contains some of the items from the original array, based on the condition you specify.
+JavaScript will take your callback function and call it for every single item in the array.
+For the .filter() method, the result of the callback function matters. When it's true, the item will be included in the resulting array. Otherwise, it won't.
+JavaScript cannot make a smart guess that the numbers array becomes the number parameter in your callback function. What it does is that it calls your callback function while giving a value for the first parameter that you specified.
+Use the plural -> singular naming convention when using the .filter() method.
+
+Array find
+
+
+We learned in the previous lesson about the Array .filter() method. In this lesson, we'll explore the .find() method which is a little bit similar in the way it works.
+
+Let's start with an example, this time with an array of strings:
+
+
+const names = ["Sam", "Alex", "Charlie"];
+
+const result = names.find(function(name) {
+  return name === "Alex";
+});
+console.log(result); // "Alex"
+
+In our example above, here's the callback:
+
+
+function(name) {
+  return name === "Alex";
+}
+
+So the .find(callback) method will call the callback that you provided for every item 
+in the array until one of the callbacks returns true. When this happens, it will stop calling the remaining callbacks and return to you the
+ item for which the callback returned true.
+
+ Recap
+The .find() method returns the first item which matches the condition that you specify. 
+If no items were found, you will get back undefined.
+The .filter() method always returns an array. Even if it's empty.
+
+****Array .map***
+
+Array map
+The .map(callback) method allows you to transform an array into another one. Here are some common examples:
+
+[4, 2, 5, 8] transformed to [8, 4, 10, 16]. We doubled every item in the original array.
+["sam", "Alex"] transformed to ["SAM", "ALEX"]. We upper cased every item in the original array.
+
+const numbers = [4, 2, 5, 8];
+
+const doubled = numbers.map(function(number) {
+    return number * 2;
+});
+console.log(doubled); // [8, 4, 10, 16]
+const names = ["sam", "Alex"];
+const upperNames = names.map(function(name) {
+    return name.toUpperCase();
+});
+
+
+If you forget to return from inside the callback function, you will end up with the following 
+array: [undefined, undefined]. That's because, for every item in the original array 
+(["sam", "Alex"]), 
+you're returning undefined so the end result will be [undefined, undefined].
+
+Array includes(item)
+The array .includes(item) method is one of the simplest array methods as it takes an item rather than a callback and returns true when that item exists in the array and false otherwise. Here's an example:
+
+
+const groceries = ["Apple", "Peach", "Tomato"];
+
+groceries.includes("Tomato"); // true
+groceries.includes("Bread"); // false
+
+Array join(glue)
+When you have an array and you render this array to a web page (as we'll see later on in the 
+DOM section of the course), the array will be automatically converted to a string. 
+JavaScript will automatically invoke the .toString() method of the array which 
+returns a string of the array elements separated by commas. Here's how it works:
+
+
+const groceries = ["Apple", "Peach", "Tomato"];
+groceries.toString(); // "Apple,Peach,Tomato"
+But there's a downside, which is that you cannot customize the glue that gets inserted 
+in between the array items, which is the comma , character.
+
+If you'd like to customize the glue, then you can use the .join(glue) method:
+
+
+const groceries = ["Apple", "Peach", "Tomato"];
+groceries.join("; "); // "Apple; Peach; Tomato"
+groceries.join(" . "); // "Apple . Peach . Tomato"
+
+Recap
+The array .map(callback) method allows you to transform an array into another one.
+The array .includes(item) method takes an item and returns true when that item exists in the array and false otherwise.
+The array .join(glue) method returns a string of the array elements separated by the glue.
+
+CHAPTER # 8 ------------------------------------------------------------------------------------------
+
+An object is a data type that allows you to group several variables together into one variable that contains keys and values. This is often used to represent or describe an entity. For example, a person, a user, a product, etc.
+
+Here's how you can create an object:
+
+
+const user = {
+    id: 1,
+    firstName: "Sam",
+    lastName: "Doe",
+    age: 20
+};
+Best practice icon
+
+Read the value of a property
+To read the value of a property in an object, you can use the dot notation as follows:
+
+
+const user = {
+    id: 1,
+    firstName: "Sam",
+    lastName: "Doe",
+    age: 20
+};
+
+user.id; // 1
+user.firstName; // "Sam"
+user.isAdmin; // undefined (property does not exist)
+
+Updating property value
+You can also update a property value using the same dot notation followed by an equal sign:
+
+
+const user = {
+    id: 1,
+    firstName: "Sam",
+    lastName: "Doe",
+    age: 20
+};
+
+user.lastName = "Blue";
+user.age = user.age + 1;
+console.log(user); // {id: 1, firstName: "Sam", lastName: "Blue", age: 21}
+
+Recap
+An object is a data type that allows you to group several variables together into one variable that contains keys and values.
+In JavaScript, the recommended convention is camelCase for property names (for example firstName instead of first_name).
+To read or update the value of a property, you can use the dot notation.
+
+***An object is a data type that allows you to group several variables together into one 
+variable that contains keys and values.
+In JavaScript, the recommended convention is camelCase for property names 
+(for example firstName instead of first_name).
+To read or update the value of a property, you can use the dot notation.
+
+CHAPTER 9 Arrow Functions ------------------------------------------------------------------------
+
+Before we learn about arrow functions, let's take a look at a small but useful feature.
+
+Say we've got the following code:
+
+
+function addOne(number) {
+    return number + 1;
+}
+
+addOne(2); // 3
+addOne(5); // 6
+addOne(); // what is returned?
+What do you think will happen if you call addOne() (without any argument)? In some programming 
+languages this would fail. But, in JavaScript, it won't fail and your code will continue executing.
+
+The number parameter will receive a value of undefined so the function will return undefined + 1
+which results in NaN. We've seen in a previous chapter that we can prevent this by adding an if 
+condition.
+However, there's an easier way. Let's take a look at default parameters.
+
+Note: if you're confused by the difference between parameters and arguments, here's a short 
+definition: A parameter is a variable in a function definition. When a function is called, 
+the arguments are the data you pass into the method's parameters.
+
 */
-
-
-
