@@ -607,5 +607,28 @@ However, there's an easier way. Let's take a look at default parameters.
 Note: if you're confused by the difference between parameters and arguments, here's a short 
 definition: A parameter is a variable in a function definition. When a function is called, 
 the arguments are the data you pass into the method's parameters.
+Recap
+A parameter is a variable in a function definition. When a function is called, the arguments are the data you pass into the method's
+ parameters.
+When you call a function without providing a value for an expected argument, the latter will
+ default to undefined.
+Default parameters allow you to give a default value for one or more parameters that have not been
+ provided when the function is called.
+
+ INTRODUCTION TO ARROW FUNCTIONS
+
+
+
+Last updated February 2022
+In this lesson, we'll get to know how to write arrow functions. An arrow function has 3 main benefits:
+
+It's shorter to write.
+It uses lexical scope (this will be explained in a later chapter as we need to learn about classes first).
+It can benefit from implicit return (covered in the next chapter).
+Here's an example of an arrow function:
+
+
+const sum = (a, b) => {
+    return a + b;
 
 */
