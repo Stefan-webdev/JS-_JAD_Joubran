@@ -620,10 +620,12 @@ Default parameters allow you to give a default value for one or more parameters 
 
 
 Last updated February 2022
-In this lesson, we'll get to know how to write arrow functions. An arrow function has 3 main benefits:
+In this lesson, we'll get to know how to write arrow functions. An arrow function has 
+3 main benefits:
 
 It's shorter to write.
-It uses lexical scope (this will be explained in a later chapter as we need to learn about classes first).
+It uses lexical scope (this will be explained in a later chapter as we need to learn about 
+classes first).
 It can benefit from implicit return (covered in the next chapter).
 Here's an example of an arrow function:
 
@@ -631,4 +633,382 @@ Here's an example of an arrow function:
 const sum = (a, b) => {
     return a + b;
 
-*/
+    There are multiple ways of writing a function in JavaScript.
+You could either define a function and give it a name, or you could define a variable and assign it to an anonymous function.
+
+So the following function:
+
+
+function sum(a, b) {
+    return a + b;
+}
+Can be written as:
+
+
+const sum = function(a, b) {
+    return a + b;
+}
+
+Now, let's convert that function into an arrow function.
+
+You can do that in 2 steps:
+
+remove the function keyword
+add an arrow (= and >) between the parameters (a, b) and the opening curly brace {
+This is what it will look like:
+
+
+const sum = (a, b) => {
+    return a + b;
+}
+
+Recap
+Arrow functions are shorter to write.
+Arrow functions always start with the parameters, followed by the arrow => and then the 
+function body.
+
+Array forEach
+Here's the .forEach example we saw a few chapters ago:
+
+
+const grades = [10, 8, 13];
+
+grades.forEach(function(grade) {
+    console.log(grade);
+});
+The iteration can be rewritten using arrow functions as follows:
+
+
+grades.forEach((grade) => {
+    console.log(grade);
+});
+Also, because the arrow function has one parameter (without a default value), you are allowed
+ to drop the parentheses () surrounding the parameter:
+
+
+grades.forEach(grade => {
+    console.log(grade);
+});
+This is only the case when you have one parameter. Multiple parameters have to be wrapped 
+in parentheses ().
+
+Array filter()
+The same thing applies to .filter().
+
+
+const numbers = [9, 5, 14, 3, 11];
+
+const numbersAboveTen = numbers.filter(function(number) {
+    return number > 10;
+});
+console.log(numbersAboveTen); // [14, 11]
+The .filter(callback) can be rewritten as:
+
+
+const numbersAboveTen = numbers.filter((number) => {
+    return number > 10;
+});
+You can also drop the parentheses around number because there's only one parameter.
+ This example will become even shorter in the next chapter, as we learn about implicit return 
+ in arrow functions!
+
+Recap
+When an arrow function has one parameter without a default value, you are allowed to drop 
+the parentheses around that parameter.
+Nice work! In the next chapter, we'll learn about implicit return in arrow functions which will 
+allow us to write code like this:
+
+
+let numbers = [-4, 3, -2, 5];
+numbers.filter(number => number >= 0); // [3, 5]
+Chapter Recap
+A parameter is a variable in a function definition. When a function is called, the arguments are
+ the data you pass into the method's parameters.
+When you call a function without providing a value for an expected argument, the latter will
+default to undefined.
+Default parameters allow you to give a default value for one or more parameters that have not been
+ provided when the function is called.
+Arrow functions are shorter to write.
+Arrow functions always start with the parameters, followed by the arrow => and then the function 
+body.
+When an arrow function has one parameter without a default value, you are allowed to drop the
+parentheses around that parameter.
+
+CHAPTER # 10 ----------------------------------------------------------------------------------------
+
+Implicit Return*
+
+However, with arrow functions, you can implicitly return the result of the function on some very specific conditions. Let's start with an example and then we'll explain how we got there:
+
+
+// this works 👍 (implicit return)
+const sum = (a, b) => a + b;
+
+sum(1, 3); // 4
+So, how come this example works and the previous one doesn't? Neither include the return keyword.
+ One of them works and the other one returns undefined. This is because, for the implicit return to work, you must have all the following conditions:
+
+Your function must be an arrow function.
+The function body must be only one statement. This means you must remove the curly braces.
+You must remove the return keyword because the function body is one statement.
+When all these conditions are met, the arrow function will implicitly return the result of its
+ function body (which is only one line). Let's take another example:
+
+
+const isLegal = (age) => {
+    return age >= 18;
+}
+Now let's make use of implicit return by:
+
+removing the curly braces
+removing the return keyword
+
+const isLegal = (age) => age >= 18;
+
+As mentioned in the previous chapter, when you have only one parameter, you are able to drop the
+ parentheses around the parameter. The code above becomes:
+
+
+const isLegal = age => age >= 18;
+This is the shortest possible (yet clear) way you can write this function.
+Recap
+Here are the conditions for implicit return:
+Your function must be an arrow function.
+The function body must be only one statement. This means you must remove the curly braces.
+You must remove the return keyword because the function body is one statement.
+Only use implicit return when the function body is one line and short. Never sacrifice code 
+readability and clarity in order 
+to use a certain feature.
+Implicit return only works when there's single statement inside the function (and the curly
+ braces and return keyword are omitted).
+
+ Array methods revisited
+
+
+Let's revisit some of the array methods that we learned about and see how we can write the callback
+ with arrow functions and implicit return (when possible). 
+We'll be using the same examples from previous lessons and then re-writing them.
+
+Array filter(callback)
+
+const numbers = [9, 5, 14, 3, 11];
+
+const numbersAboveTen = numbers.filter(function(number) {
+    return number > 10;
+});
+console.log(numbersAboveTen); // [14, 11]
+
+The .filter(callback) can be re-written as follows:
+
+
+--***** const numbersAboveTen = numbers.filter(number => number > 10); *****--
+
+Not only is it much shorter, but arguably it's much clearer (at least when you get used to the 
+syntax).
+Here's how you can read it: We filter the numbers where the number is bigger than 10.
+
+A common mistake here is writing numbers.filter(number > 10) but this does not work because you
+need to pass the parameter first number and then the arrow function => and then finally specify the
+function body which is number > 10.
+
+
+Array find(callback)
+
+const names = ["Sam", "Alex", "Charlie"];
+
+const result = names.find(function(name) {
+  return name === "Alex";
+});
+console.log(result); // "Alex"
+The .find(callback) can be re-written as follows:
+
+
+const result = names.find(name => name === "Alex");
+This can be read as: From the names array, find the name that is equal to the string "Alex".
+
+Array map(callback)
+
+const numbers = [4, 2, 5, 8];
+
+const doubled = numbers.map(function(number) {
+    return number * 2;
+});
+console.log(doubled); // [8, 4, 10, 16]
+The .map(callback) can be re-written as follows:
+
+
+const doubled = numbers.map(number => number * 2);
+This can be read as: Create a new array based on the numbers array, where every number is
+multiplied by 2.
+
+If we take a look at the answer of the Classroom project:
+
+
+const getRaisedGrades = grades => {
+    return grades.map(function(grade) {
+        if (grade + 1 > 20) {
+            return 20;
+        }
+        return grade + 1;
+    }).join(", ");
+}
+Can you use implicit return here?
+
+The function body is more than one line so you cannot use implicit return. 
+If you'd like, you can re-write it with arrow functions:
+
+
+const getRaisedGrades = grades => {
+    return grades.map(grade => {
+        if (grade + 1 > 20) {
+            return 20;
+        }
+        return grade + 1;
+    }).join(", ");
+}
+
+Recap
+Here are the conditions for implicit return:
+Your function must be an arrow function.
+The function body must be only one statement. This means you must remove the curly braces.
+You must remove the return keyword because the function body is one statement.
+Only use implicit return when the function body is one line and short. Never sacrifice code readability and clarity in order to 
+use a certain feature.
+Implicit return only works when there's single statement inside the function
+ (and the curly braces and return keyword are omitted).
+
+ CHAPTER # 11 STRING METHODS ---------------------------------------------------------------------------
+
+ String .trim()
+This one is especially useful when working with the DOM (we'll learn about the DOM in chapter 48),
+ and you expect the user to enter some text. Users will sometimes, by accident, enter an empty space character at the beginning or the end of a text box.
+
+Say, for example, you ask the user for their name, and they enter " Sam" instead of "Sam". 
+This could cause issues in some scenarios (for example, email addresses).
+
+The solution for that is using the .trim() method which removes all leading (at the beginning)
+ and trailing (at the end) space characters.
+
+
+const name = "  Sam Blue ";
+name.trim(); // "Sam Blue"
+
+String .startsWith() and .endsWith()
+The .startsWith(substring) method returns true when the substring is found at the beginning of 
+the string and false otherwise.
+The .endsWith(substring) works the same but for the end of the string.
+
+
+const sentence = "Hello there. Welcome!";
+
+sentence.startsWith("H"); // true
+sentence.startsWith("Hello"); // true
+sentence.startsWith("Hey"); // false
+sentence.startsWith("Sam"); // false
+
+sentence.endsWith("."); // false
+sentence.endsWith("!"); // true
+sentence.endsWith("Welcome!"); // true
+sentence.endsWith("Welcome"); // false
+
+String .includes(substring)
+The .includes(substring) method returns true when the substring can be found anywhere in the string and false
+ otherwise.
+
+
+const sentence = "Hello there. Welcome!";
+
+sentence.includes("there"); // true
+sentence.includes("W"); // true
+sentence.includes("Hello"); // true
+sentence.includes("Hey"); // false
+sentence.includes("Sam"); // false
+sentence.includes("."); // true
+sentence.includes("!"); // true
+sentence.includes("Welcome"); // true
+MDN logostring.includes() on MDN
+
+
+Recap
+String .trim() removes all leading and trailing space characters.
+String .startsWith(substring) returns true when the substring is found at the beginning of the
+ string, and false otherwise.
+String .endsWith(substring) works the same but for the end of the string.
+String .includes(substring) returns true when the substring can be found anywhere in the string, 
+and false otherwise.
+
+String .split(separator)
+The .split(separator) method divides the string into an array of substrings based on the separator
+ you provide. For example:
+
+
+let apps = "Calculator,Phone,Contacts";
+let appsArray = apps.split(",");
+console.log(appsArray); // ["Calculator", "Phone", "Contacts"]
+This is especially useful to convert from CSV (Comma Separated Values) back to an array. Reminder that the opposite of String.split(separator) would be Array.join(glue).
+
+MDN logoString.split() on MDN
+
+
+String.replace(search, replace)
+The .replace(search, replace) method returns a new string where the first occurrence of the search
+ parameter you provide is replaced by the replace parameter, for example:
+
+
+const message = "You are welcome.";
+message.replace(" ", "_"); // "You_are welcome."; (only the first occurrence has been replaced)
+console.log(message); // "You are welcome." (original string is not changed)
+In this example, we search for the " " (space character) and replace it with an "_" (underscore 
+character). Notice how it only replaces the first match.
+
+If you'd like to replace all the occurrences, then you can use the .replaceAll() method explained
+ below. It is also possible to pass a regular expression as a first parameter (which can be used to match more than one item. Though, generally, using .replaceAll() is easier).
+
+MDN logoString.replace() on MDN
+
+
+String.replaceAll(search, replace)
+This method works like the one above, except that it will replace all occurrences.
+
+
+const message = "You are welcome.";
+message.replaceAll(" ", "_"); // "You_are_welcome";
+console.log(message); // "You are welcome" (original string is not changed)
+MDN logoString.replaceAll() on MDN
+
+
+Recap
+String.split(separator) divides the string into an array by splitting it with the separator you 
+provide.
+String.replace(search, replace) replaces the first occurrence of search by replace.
+String.replaceAll(search, replace) is similar to the .replace() method except that it replaces all
+ occurrences.
+ Chapter recap
+
+Last updated April 2024
+Great job!
+
+While learning, it's very important to get a good amount of sleep in between chapters.
+Sleep has been proven to consolidate new knowledge as it moves it from short-term memory to 
+long-term memory. Moreover, REM sleep (and dreams) helps you make new connections from the things that you just learned with your existing knowledge.
+
+So, make sure to use sleep to your advantage, and you can always click on the Remind me button 
+that shows up on challenge pages after your first incorrect attempt. The button shows up on the bottom right of the screen.
+
+Chapter Recap
+String .trim() removes all leading and trailing space characters.
+String .startsWith(substring) returns true when the substring is found at the beginning of the 
+string, and false otherwise.
+String .endsWith(substring) works the same but for the end of the string.
+String .includes(substring) returns true when the substring can be found anywhere in the string, 
+and false otherwise.
+String.split(separator) divides the string into an array by splitting it with the separator you 
+provide.
+String.replace(search, replace) replaces the first occurrence of search by replace.
+String.replaceAll(search, replace) is similar to the .replace() method except that it replaces 
+all occurrences.
+
+
+
+*/ 
+
