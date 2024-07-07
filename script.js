@@ -1008,7 +1008,483 @@ String.replace(search, replace) replaces the first occurrence of search by repla
 String.replaceAll(search, replace) is similar to the .replace() method except that it replaces 
 all occurrences.
 
+Chapter # 12 Array.toString -----------------------------------------------------------------------------
 
+Array to string
+
+Last updated May 2022
+Here's a neat trick: Let's say you have an array of users, and you'd like to get the name of each user separated by a comma. Like a CSV (Comma Separated Values) export. How would you do that?
+
+You already know the 2 methods that you need for such operations:
+First, you start with a .map() call to extract the name from the users array , and then you use .join() to join the array elements into one string.
+
+
+const users = [{
+    id: 1,
+    name: "Sam Doe"
+}, {
+    id: 2,
+    name: "Alex Blue"
+}];
+
+const userNamesArray = users.map(user => user.name);
+console.log(userNamesArray); // ["Sam Doe", "Alex Blue"];
+
+const csv = userNamesArray.join(", ");
+console.log(csv); // "Sam Doe, Alex Blue"
+You can also chain these 2 commands and write it on one line:
+
+
+const csv = users.map(user => user.name).join(", ");
+console.log(csv); // "Sam Doe, Alex Blue"
+Pretty neat right? ✨
+
+Applying it to HTML
+The above trick is often used to generate an HTML string from an array. Let's say we'd like to 
+return an unordered list (a ul with li items) from the users array above. Instead of writing it 
+with .forEach, you can use the above trick as follows:
+
+
+const html = `<ul>
+    ${users.map(user => `<li>${user.name}</li>`).join("")}
+    </ul>`;
+console.log(html); // <ul> <li>Sam Doe</li><li>Alex Blue</li> </ul>
+Notice how for every user, we return an <li>...</li> with the user's name inside.
+What's very important here is the .join(""). If you forget this, you will get the following HTML:
+
+
+<ul><li>Sam Doe</li>,<li>Alex Blue</li></ul>
+That's because the array returned from .map() will automatically be converted to a string by the 
+browser. It will automatically call the .toString() method which will insert a comma after every 
+array item.
+
+Instead, you want to convert the array into a string yourself. You can do that by calling .join("") with an empty string as glue.
+
+Finally, you have to wrap the whole string with the opening <ul> and the closing </ul>.
+
+You don't necessarily have to use this approach, but we do recommend that you get used to it as it (or a very similar adaptation) is very frequently used in front-end libraries/frameworks (React, Angular, lit-element, etc)!
+
+Array.every(callback)
+The Array .every(callback) method returns true when every item in the array satisfies the condition provided in the callback.
+
+Here's an example:
+
+
+const numbers = [15, 10, 20];
+
+const allAbove10 = numbers.every(number => number >= 10); // true
+const allAbove15 = numbers.every(number => number >= 15); // false
+
+Array.some(callback)
+Similarly, the Array .some(callback) method returns true when at least one item in the array satisfies the condition provided in the callback.
+
+
+const numbers = [15, 10, 20];
+
+const someOver18 = numbers.some(number => number >= 18); // true
+const someUnder10 = numbers.some(number => number < 10); // false
+Notice how someOver18 evaluates to true because at least one of the items in the numbers array returned true for the condition number >= 18.
+Whereas someUnder10 evaluates to false because none of the items in the numbers array returned true.
+
+Recap
+The Array .every(callback) method returns true when every item in the array satisfies the condition 
+provided in the callback.
+The Array .some(callback) method returns true when at least one item in the array satisfies the 
+condition provided in the callback.
+
+Deleting items
+
+Last updated April 2024
+Say you've got an array and you'd like to empty it; you can do that by setting its length to 0:
+
+
+const items = ["Pen", "Paper"];
+items.length = 0;
+
+console.log(items); // []
+This works even though we're using const because we're not re-assigning items but rather changing
+ its length to 0, which ends up removing all the items inside of it. The const here guarantees that 
+ we will always have an array
+ (but its content can change).
+
+ Array.splice()
+You can also delete specific items from an array using the splice(start[, deleteCount]) method.
+
+Warning sign
+Do not confuse splice with another method called slice.
+
+Did you notice the [, deleteCount] syntax? You will often see this syntax in documentation, which means that the deleteCount parameter is optional.
+
+The .splice(start[, deleteCount]) method removes items from the array starting from the start index 
+that you specify. If no deleteCount is provided, it will remove all the remaining items as of the start index.
+When you specify a deleteCount, then it will remove as many items as you provided in the deleteCount 
+from the start index.
+The definition is more complicated than the example, so we recommend you take a look at the examples
+ below:
+
+To delete the 1st element of an array, you call .splice(0, 1).
+To delete 3 elements starting from the 2nd position, you call .splice(1, 3).
+If you call .splice(1), then it will remove all the items starting from the 2nd position (index 1).
+
+Recap
+You can empty an array by setting its length to 0.
+.splice(start[, deleteCount]) removes items from the array from the start index. The number of items it will remove is specified by deleteCount.
+If you omit deleteCount, it will remove all the items as of the start index.
+
+Great work! In the next chapter, we'll learn about the array .reduce() method!
+
+Chapter Recap
+The Array .every(callback) method returns true when every item in the array satisfies the condition 
+provided in the callback.
+The Array .some(callback) method returns true when at least one item in the array satisfies the 
+condition provided in the callback.
+You can empty an array by setting its length to 0.
+.splice(start[, deleteCount]) removes items from the array from the start index. The number of 
+items it will remove is specified by deleteCount.
+If you omit deleteCount, it will remove all the items as of the start index.
+
+CHAPTER # 13 --------------------------------------------------------------------------------------------
+
+Array.reduce
+
+What is reduce?
+
+Note: Most developers find reduce a tough concept to understand, so this chapter is taken from the
+ Learn Programming course. If you've already taken that course, we recommend that you read the chapter again here as a review. We will have another more advanced reduce chapter once we learn about arrays of objects.
+
+The reduce() method is a little bit complicated but we'll break it down step by step. 
+Don't worry if you don't understand it the first time.
+
+The reduce() method is used to calculate a single value from an array. In other terms, you reduce 
+an array into a single value.
+
+Reduce example: sum
+We can reduce the array [5, 10, 5] to the number 20.
+We can reduce the array [2, 4, 3] to the number 9.
+
+You may have noticed that both of these examples have summed up the items in the array. 
+5 + 10 + 5 = 20 and 2 + 4 + 3 = 9.
+
+This is one of the most common use cases of reduce(), which is summing the array items.
+
+Reduce example: multiplication
+Another example is multiplication. For example:
+
+We can reduce the array [10, 2, 2] to the number 40 (10 * 2 * 2 = 40).
+
+So is the reduce method a sum or a multiplication?
+It's neither. That's because the reduce() method accepts the reducer which is a 
+callback that you have to write. That callback can be sum, multiplication, or some other logic that you may think of.
+
+So reduce is a generic function that will reduce an array into a single value.
+ The way it will reduce that array into a single value is configurable by you, the developer. You can configure that in the reducer callback.
+
+We don't expect things to be clear yet as we have not shown you the code, but below you can 
+find the recap of the most important concepts covered so far.
+
+Recap
+The reduce() method is used to calculate a single value from an array.
+In other terms, the reduce() method reduces an array into a single value.
+The most common use cases of reduce (when working with arrays of numbers) are sum & multiplication.
+The reduce() method takes a reducer which allows you to configure the logic of how the array will 
+be reduced into a single number.
+
+Time to take a look at the code! In this lesson, we'll focus on one use case of reduce: calculating the sum. Thus, reducing an array of numbers into its sum.
+
+Assuming the grades array below:
+
+
+const grades = [10, 15, 5];
+Here's how we can calculate its sum with reduce:
+
+
+const sum = grades.reduce((total, current) => { 
+    return total + current;
+}, 0);
+There's a lot of things happening here, let's break them down:
+
+We call the .reduce() method on the grades array.
+We assign the result of grades.reduce() to a new variable called sum.
+The reduce method is taking 2 parameters: The reducer and the initial value.
+Reducer
+The reducer in this example is:
+
+
+(total, current) => { 
+    return total + current;
+}
+This is the callback that is applied for every item in the array, however, this callback takes 2 parameters: total and current.
+
+The total is always referring to the last computed value by the reduce function. You may often see this called as accumulator in documentation which is a more correct name. And the current is referring to a single item in the array. Let's see what this means by showing the value of total and current for every step:
+
+
+// code that we run
+const grades = [10, 15, 5];
+
+const sum = grades.reduce((total, current) => { 
+    return total + current;
+}, 0);
+The first time the callback runs, total is assigned 0 (because of the initial value that we'll 
+explain in a bit) and current will be assigned to the first item of the array. So total = 0 and
+ current = 10.
+Then we return total + current which is 0 + 10 = 10. Now the new value of total becomes 10.
+The callback runs the second time and this time current = 15 (second item of the array) 
+and total = 10. We return total + current which is 10 + 15 = 25. The current value of total
+ becomes 25.
+The callback runs the third time and this time current = 5 (third item of the array) and total = 25.
+ We return total + current which is 25 + 5 = 30.
+There are no more items in the array, so the result of the reduce is the final value of total which 
+is 30.
+Thus the sum is 30.
+Initial Value
+The .reduce() method accepts 2 parameters: reducer and initialValue (not to be confused by the 2
+ parameters of the reducer which are total and current). We explained the reducer above. The initialValue is the value we give to the total (or accumulator) the first time the callback runs.
+
+Passing 0 as initialValue is the same as declaring let sum = 0 when using .forEach() to calculate 
+the sum.
+It's the starting value that we use to be able to calculate the sum.
+
+JavaScript will automatically take your initialValue and pass it to the total argument in the reducer the first time that callback runs.
+
+So is the initialValue always 0? When calculating the sum yes. We'll discuss other values in the next lesson.
+
+Recap
+The reduce() method takes 2 parameters: reducer and initialValue. .reduce(reducer, initialValue).
+The initialValue is always 0 for sum.
+The reducer is a callback function that receives 2 parameters: total and current.
+The total (also called accumulator) keeps track of the result of the reduce method. For example, when calculating the sum, it keeps track of the sum, step by step.
+The current represents one item of the array.
+The reducer is called for every item in the array.
+
+Array reduce: multiplication--------------------------------------**************
+
+
+In this lesson, we'll explore another example for array reduce which is multiplication.
+
+Let's say we've got the following numbers and we'd like to multiply them all:
+
+
+const numbers = [5, 2, 10];
+We can use .reduce() here because we're reducing the entire array into a single number 
+(which is the multiplication of all these numbers).
+
+
+const result = numbers.reduce((total, current) => {
+    return total * current;
+}, 1);
+console.log(result); // 100
+Starting value for multiplication
+Before we explain the code step by step, let's talk about the startingValue which has a value of
+ 1 here.
+
+When doing multiplication, we can't have a starting value of 0. That's because any number 
+multiplied by 0 will result in 0. 5 * 0 = 0. We need a number that is neutral in multiplication, and that number is 1 because any number multiplied by 1 will be that same number. For example, 1 * 5 = 5.
+
+This is why in multiplication we use a starting value of 1 and in sum, we use a starting value of 0.
+
+Step by step explanation
+Going back to the code, here's how it runs step by step:
+
+
+const numbers = [5, 2, 10];
+
+const result = numbers.reduce((total, current) => {
+    return total * current;
+}, 1);
+The first time .reduce() callback runs, total will have a value of 1 
+(coming from the starting value) and current will have a value of 5 (which is the first item of 
+the array).
+Then we return total * current which is 1 * 5 = 5 so the next time the callback runs, total will
+ have a value of 5.
+The second time the callback runs, total is 5 and current is 2 (second item of the array).
+ We compute 5 * 2 = 10. We return 10.
+The third time the callback runs, total is 10 and current is 10 (third item of the array). 
+We compute 10 * 10 = 100. We return 100.
+The result of the .reduce() is 100 which is stored in the variable result.
+Common mistakes
+When it comes to .reduce(), there are 3 common mistakes:
+
+Syntax errors
+Due to the number of parentheses and curly braces, it can get quite messy. Re-write the code from 
+scratch and write it on pen and paper.
+
+Forgetting to return
+Forgetting to return will lead to undefined values which will most likely end up giving you a 
+result of NaN.
+Make sure that you return from inside the .reduce() callback.
+
+Wrong initialValue
+The last common mistake is forgetting the initialValue or providing a wrong initialValue.
+If you provide an initialValue of 0 for a multiplication, you will end up with a 0 at the end
+ which should be a cue that the initialValue was wrong.
+
+Recap
+For multiplication, we use an initialValue of 1.
+Reduce common mistakes:
+Syntax errors
+Forgetting to return
+Wrong initialValue
+
+Chapter recap
+
+Last updated October 2022
+In a future chapter, we'll learn how to reduce an array of objects into a single value, using the concepts that you learned in this chapter.
+
+The concept of reduce is a tough one even for intermediate developers so don't sweat it if it wasn't 100% clear and feel free to revisit it a couple of weeks from now.
+It's also okay for you to continue using .forEach to calculate the sum rather than reduce. That's perfectly fine.
+
+We'd like to show you the code to calculate the sum using .forEach and .reduce so you can see the similarities and differences:
+
+Using .forEach
+
+let sum = 0
+numbers.forEach(number => {
+    sum = sum + number
+});
+Using .reduce
+
+const sum = numbers.reduce((total, current) => {
+    return total + current
+}, 0);
+One of the similarities is that the initialValue was let sum = 0 but now it's the second argument 
+passed to .reduce().
+One of the differences is that .forEach does not return anything whereas reduce returns a result
+ (in this case the sum).
+
+The .reduce example can be written on one line using implicit return:
+
+
+const sum = numbers.reduce((total, current) => total + current, 0);
+I've also published a YouTube video about array reduce. Note that the last part of the video spoils 
+some of the answers from Chapter 22 (reducing arrays of objects).
+
+Chapter Recap
+The reduce() method is used to calculate a single value from an array.
+In other terms, the reduce() method reduces an array into a single value.
+The most common use cases of reduce (when working with arrays of numbers) are sum & multiplication.
+The reduce() method takes a reducer which allows you to configure the logic of how the array will be
+ reduced into a single number.
+The reduce() method takes 2 parameters: reducer and initialValue. .reduce(reducer, initialValue).
+The initialValue is always 0 for sum.
+The reducer is a callback function that receives 2 parameters: total and current.
+The total (also called accumulator) keeps track of the result of the reduce method. For example, 
+when calculating the sum, it keeps track of the sum, step by step.
+The current represents one item of the array.
+The reducer is called for every item in the array.
+For multiplication, we use an initialValue of 1.
+Reduce common mistakes:
+Syntax errors
+Forgetting to return
+Wrong initialValue
+
+CHAPTER # 14 --------------------------------------------------------------------------------------------
+
+Array destructuring
+
+Last updated February 2023
+Array destructuring is a relatively new feature of the JavaScript language and is considered syntactic sugar, meaning that it makes your code easier to read.
+
+Say you've got the following array containing the width and height of an item and you'd like to create variables for the width and height:
+
+
+const dimensions = [20, 5]
+
+// create variables
+const width = dimensions[0];
+const height = dimensions[1];
+
+// log them
+console.log(width); //20
+console.log(height); //5
+The above code can be rewritten using the new array destructuring syntax as follows:
+
+
+const dimensions = [20, 5]
+
+// create variables
+const [width, height] = dimensions;
+
+// log them
+console.log(width); //20
+console.log(height); //5
+The 2 variable declarations were replaced with one line: const [width, height] = dimensions. The end 
+result is the same.
+
+We are pulling the first entry of dimensions into a new variable width, and we're pulling the second
+ entry of dimensions into a new variable height.
+So the order in the [] matters for array destructuring as the first variable name will correspond to 
+the first item in the array (index 0), the second variable name will correspond to the second item in the array (index 1), and so on...
+
+You can identify destructuring when you see the square brackets [] on the left side of the equal sign.
+
+As with most features, you may dislike the syntax at first, but it's very elegant once you get used to it.
+
+MDN logoArray destructuring on MDN
+
+
+Examples in React hooks
+React (library) is outside the scope of this course, but in case you've seen some React hooks code 
+that looks like this:
+
+
+function App() {
+    const [counter, setCounter] = useState(0);
+}
+The const [counter, setCounter] = useState(0) is array destructuring.
+
+The function useState(0) returns an array of 2 items and we destructure them into 2 variables counter and setCounter.
+
+If you've never seen this code above, then don't worry about it.
+
+Recap
+Array destructuring is syntactic sugar (meaning that it makes your code easier to read).
+The order in array destructuring matters, as every variable will be matched to the corresponding array item.
+You can identify destructuring when you see the square brackets [] on the left side of the equal sign.
+
+
+-------- ************
+
+Array concatenation
+
+
+You can concatenate/merge several arrays' content into a new array using the ... spread syntax.
+Here's an example:
+
+
+const lat = [5.234];
+const lng = [1.412];
+const point = [...lat, ...lng];
+console.log(point); // [5.234, 1.412];
+The new array contains the elements of both arrays.
+
+Here's another example where we create a new array based on the old one and add new items to it:
+
+
+const items = ["Tissues", "Oranges"];
+
+const otherItems = [...items, "Tomatoes"];
+console.log(otherItems); // ["Tissues", "Oranges", "Tomatoes"]
+We will revisit array concatenation once we learn about immutability which is an important concept in JavaScript.
+
+MDN logoSpread syntax on MDN
+
+
+Recap
+You can concatenate/merge several arrays into a new array using the ... concatenation syntax.
+
+
+***Chapter recap***-----------
+
+Last updated January 2023
+Nice work!
+
+In the next chapter, we'll learn more about objects. See you there!
+
+Chapter Recap
+Array destructuring is syntactic sugar (meaning that it makes your code easier to read).
+The order in array destructuring matters, as every variable will be matched to the corresponding array item.
+You can identify destructuring when you see the square brackets [] on the left side of the equal sign.
+You can concatenate/merge several arrays into a new array using the ... spread syntax.
 
 */ 
 
