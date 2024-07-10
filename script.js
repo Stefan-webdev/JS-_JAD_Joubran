@@ -1486,5 +1486,219 @@ The order in array destructuring matters, as every variable will be matched to t
 You can identify destructuring when you see the square brackets [] on the left side of the equal sign.
 You can concatenate/merge several arrays into a new array using the ... spread syntax.
 
+
+CHAPTER 15 OBJECTS -------------------------------------------------------------------------------------
+
+const user = {
+   id: 1,
+   name: "Sam Green"
+};
+
+const key = "id"; // the name of the property that we want to access on the user object
+
+// ❌ this does NOT work
+user.key; // undefined
+
+We cannot use the dot syntax here because the property is dynamic. When you write user.key, 
+JavaScript will then look for a property called key which is not the case here. Instead, we need 
+to get the value of the variable key, which is "id".
+
+For that, you have to use the square brackets as follows:
+
+const user = {
+    id: 1,
+    name: "Sam Green",
+    age: 20
+};
+
+const key = "id";
+user[key]; // 1
+
+This works because [key] will evaluate the expression inside the square brackets. In this case, key evaluates to "id". So we end up reading the property id which returns 1 (because user.id is 1).
+
+You're probably thinking that this is overcomplicated and we could have just accessed user.id. That's true, however, there are cases where the key will be stored in a variable. For example, take the function below:
+
+
+const getValue = (user, keyToRead) => {
+    return user[keyToRead];
+}
+
+// Sample usage
+getValue({id: 2, name: "Sam"}, "name"); // "Sam"
+getValue({id: 2, name: "Sam"}, "id"); // 2
+In this case, getValue accepts an object user and then the keyToRead. So, to be able to implement the function, we had to access the property dynamically with user[keyToRead].
+This allows the function to be dynamic and accept any key on the user object, and its value will be returned!
+
+Don't worry if the concept is still not clear, this is a tough one. We'll have a challenge with some DOM with it so that you can better visualize it.
+
+Object.keys()
+The Object.keys(obj) method returns an array of all the keys in the obj that you provide.
+Note that we have Object here, which is a global variable available in JavaScript. It is similar to
+Number on which we called Number.parseInt() before.
+
+The Object global variable contains methods that are relevant to objects. One of them is the keys()
+ which accepts any object. For example:
+
+
+const user = {
+    id: 1,
+    name: "Sam Green",
+    age: 20
+};
+
+const keys = Object.keys(user);
+console.log(keys); // ["id", "name", "age"]
+Notice how it returns an array containing every single key from the user object.
+
+Remember to pass the object whose keys you want into the .keys() method. It's often confusing 
+for developers to see this Object (with a capital O in the beginning). 
+You can remember it as if the name of the function is Object.keys() and then it receives whatever 
+object you want as a parameter.
+
+MDN logoObject.keys() on MDN
+
+
+Putting it all together
+Since Object.keys() returns an array, you can use it to loop through every key in the object and get its value dynamically:
+
+
+const settings = {
+    theme: "Dark",
+    version: "2.4.1",
+    beta: false
+};
+
+const keys = Object.keys(settings);
+console.log(keys); // ["theme", "version", "beta"]
+keys.forEach(key => {
+    // log the value of every key dynamically
+    console.log(settings[key]);
+});
+The console.log(settings[key]) will log the value of every key. So you will see the following in the
+ console:
+
+
+"Dark"
+"2.4.1"
+false
+
+
+Recap
+You cannot use the dot syntax when the property you're trying to read is stored in a variable or the
+ result of an expression (dynamic).
+Instead, you should use square brackets with the name of the variable inside. For example [key].
+object[key] will evaluate the key expression first and then read the property based on its result.
+The Object.keys(obj) method returns an array of all the keys in the obj that you provide.
+
+Object methods
+
+Last updated January 2023
+In this lesson, we'll learn about 2 object methods. But first, let's take a look at what happens when you access a property that does not exist on an object.
+
+
+const person = {
+    id: 1,
+    firstName: "Sam"
+};
+
+person.firstname; // undefined (firstname instead of firstName)
+person.age; // undefined
+Notice how when we access a property that does not exist (such as age or the misspelled firstname), then we get undefined.
+
+This is not an error but this may often lead to an error if you try to access another property or method on it. For example:
+
+
+person.age.toUpperCase(); // ❌ Uncaught TypeError: Cannot read property 'toUpperCase' of undefined
+This is one of the most common errors that you will see in JavaScript. TypeScript does a great job at preventing these kind of errors, though it comes with its own overhead.
+
+It's important to be able to read this error message and understand that the issue is not .toUpperCase() but instead, the expression that came before it person.age.
+That's because you end up calling undefined.toUpperCase() which does not exist.
+
+[object Object]
+Another note worth mentioning is that when you see [object Object] it means that the .toString() method has been automatically called on an object which will result in [object Object].
+
+So if you see [object Object], it means you tried to use an object in a context that expects a string. For example:
+
+
+const person = {
+    id: 1,
+    firstName: "Sam"
+};
+
+console.log(`Hello ${person}`); // "Hello [object Object]"
+In this case, we should probably replace ${person} with ${person.firstName}.
+
+Object.values()
+In the previous lesson, we saw that we can access the values of an object by looping through the keys and
+ then dynamically accessing the keys. This works if you need to access both the keys and the values.
+However, if you only need to access the values, then you can use Object.values() which returns an array 
+of the values:
+
+
+const user = {
+    id: 1,
+    name: "Sam Green",
+    age: 20
+};
+
+const values = Object.values(user);
+console.log(values); // [1, "Sam Green", 20]
+MDN logoObject.values() on MDN
+
+
+Object.entries()
+The Object.entries() method returns an array of arrays representing every key/value pair. 
+Let's visualize it:
+
+
+const user = {
+    id: 1,
+    name: "Sam Green",
+    age: 20
+};
+
+const entries = Object.entries(user);
+The entries variable will return the following array of arrays:
+
+
+[
+    ["id", 1],
+    ["name", "Sam Green"],
+    ["age", 20]
+]
+This is especially useful in combination with array destructuring and for..in (which is covered in a later chapter).
+
+MDN logoObject.entries() on MDN
+
+
+Recap
+When you access a property that does not exist on an object, you will get undefined.
+When you try to access a property or call a method on undefined (or an expression that evaluates to
+ undefined), you will get an error Uncaught TypeError: Cannot read property 'X' of undefined.
+When you see [object Object], it means that an object was used in a context that was expecting a string.
+ So the .toString() method has been called automatically on the object.
+The Object.values() method returns an array of the values of an object.
+The Object.entries() method returns an array of arrays representing every key/value pair.
+We will revisit Object.entries() later in this course.
+
+Great job!
+
+We will continue working with objects in the next chapter. See you there!
+
+Chapter Recap
+You cannot use the dot syntax when the property you're trying to read is stored in a variable or the result of an expression (dynamic).
+Instead, you should use square brackets with the name of the variable inside. For example [key].
+object[key] will evaluate the key expression first and then read the property based on its result.
+The Object.keys(obj) method returns an array of all the keys in the obj that you provide.
+When you access a property that does not exist on an object, you will get undefined.
+When you try to access a property or call a method on undefined (or an expression that evaluates to 
+undefined), you will get an error Uncaught TypeError: Cannot read property 'X' of undefined.
+When you see [object Object], it means that an object was used in a context that was expecting a string.
+So, the .toString() method has been called automatically on the object.
+The Object.values() method returns an array of the values of an object.
+The Object.entries() method returns an array of arrays representing every key/value pair.
+We will revisit Object.entries() later in this course.
+
+
 */ 
 
