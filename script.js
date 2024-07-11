@@ -1699,6 +1699,466 @@ The Object.values() method returns an array of the values of an object.
 The Object.entries() method returns an array of arrays representing every key/value pair.
 We will revisit Object.entries() later in this course.
 
+CHAPTER 16 OBJECTS --------------------------------------------------------------------------------
+
+Destructuring & Concatenation
+
+
+Just like array destructuring, you can destructure key/value pairs (or nested objects) from an object. The concept is similar, except that you have to use {} instead of [] on the left side of the = operator and you should have an object on the right side of the = operator.
+
+Let's take a look at some examples. Assuming the following object:
+
+
+const config = {
+    id: 1,
+    isAdmin: false,
+    theme: {
+        dark: false,
+        accessibility: true
+    }
+};
+Here's how you access some of its properties and create variables out of them:
+
+
+const id = config.id;
+const isAdmin = config.isAdmin;
+const theme = config.theme;
+This can be refactored with object destructuring as follows:
+
+
+const {id, isAdmin, theme} = config;
+The new id variable is created from config.id. So, the variable names should match the key names.
+ We'll cover destructuring and renaming in a section below.
+
+You can also decide to only destructure the variables you need, for example:
+
+
+const {isAdmin, theme} = config;
+Object destructuring is considered syntactic sugar meaning it makes reading the code easier 
+(once you get used to it).
+
+MDN logoObject destructuring on MDN
+
+
+Destructuring with default value
+It's also possible to destructure with a default value, meaning that you can assign a default value 
+to a property if it does not exist in the object you're destructuring from. For example:
+
+
+const user = {
+    id: 1,
+    name: "Sam"
+};
+
+const {name, isAdmin = false} = user;
+console.log(isAdmin); // false
+As you can see, isAdmin defaulted to false because it does not exist on user.
+
+
+const user = {
+    id: 1,
+    name: "Sam",
+    isAdmin: true
+};
+
+const {name, isAdmin = false} = user;
+console.log(isAdmin); // true
+Whereas, in this example, it did not default to false because it exists on user so it just gets 
+destructured.
+
+Destructure and rename
+It's also possible to destructure and rename from an object. For example, let's say you already have a 
+name variable so you'd like to destructure user.name and assign it to a variable called userName. Here's how you can do it:
+
+
+const name = "Document title"; // name variable is already declared
+
+const user = {
+    id: 1,
+    name: "Sam",
+    isAdmin: true
+};
+
+// destructure user.name into variable userName
+const {name: userName, isAdmin} = user;
+console.log(userName); // "Sam"
+Here's another example where we destructure user.isAdmin into a new variable admin (note that we
+ destructure it and rename it):
+
+
+const user = {
+    id: 1,
+    name: "Sam",
+    isAdmin: true
+};
+
+const {id, name, isAdmin: admin} = user;
+// We've renamed isAdmin to admin while destructuring
+console.log(admin); // true
+Concatenate objects
+In some scenarios, you'd like to merge 2 objects together. You can do that using the ... spread operator.
+
+
+const firstPerson = {
+    name: "Sam",
+    age: 18
+}
+
+const secondPerson = {
+    age: 25,
+    type: "admin"
+}
+
+const mergedObjects = {...firstPerson, ...secondPerson};
+console.log(mergedObjects); // {name: "Sam", age: 25, type: "admin"}
+Notice how the new object ended up with the name and type from both objects. However, regarding the 
+age, since it exists in both objects, only the 2nd one persisted.
+This is why the order of the objects matters when spreading them.
+
+Recap
+Just like array destructuring, you can destructure key/value pairs (or nested objects) from an object.
+It's also possible to destructure with a default value, meaning that you can assign a default value to a
+property if it does not exist in the object you're destructuring from.
+You can merge objects together with the ... operator. The order of objects matters (for duplicate keys).
+
+Nice work!
+
+It's also possible to check if a key exists in an object using the in operator. The in operator returns true if the specified property is found in the specified object, otherwise it returns false.
+
+Here's an example:
+
+
+const person = {
+    name: "Alex",
+    age: 35
+};
+
+if ("name" in person) {
+    console.log(person.name);
+}
+Notice that the property name should be given as a string.
+
+You will learn in the following chapter about optional chaining, which makes this use case less relevant.
+ On the other hand, the in operator is more commonly used to look up if a key exists in the window object. Here's a common use case:
+
+
+if ("ontouchstart" in window) {
+    // using a touchscreen
+} else {
+    // not using a touchscreen
+}
+Please note that there are many concepts yet to be explained (notably: the window object and event 
+handlers). The ontouchstart is an event handler that's only present when the user is browsing from a 
+device with a touchscreen. So, by checking the existence of this key in window ("ontouchstart" in window), we're able to know whether the user is using a touchscreen or not.
+
+In the next chapter, we'll learn about optional chaining!
+
+Chapter Recap
+Assuming a variable name, here's an example of object shorthand: const user = {name}.
+const user = {age} is equivalent to const user = {age: age}.
+When you have several console.log calls, wrap the values with {} so that you use object shorthand. 
+The benefit is that you will be able to see the name of the variable that you were trying to log, 
+alongside its value.
+Just like array destructuring, you can destructure key/value pairs (or nested objects) from an object.
+It's also possible to destructure with a default value, meaning that you can assign a default value to a
+ property if it does not exist in the object you're destructuring from.
+You can merge objects together with the ... operator. The order of objects matters (for duplicate keys).
+
+CHAPTER 17 OBJECT CHAINING. -----------------------------------------------------------------------------------
+
+Optional chaining
+
+Last updated June 2023
+We know from a previous chapter that if an object property returns undefined, then we should avoid 
+accessing other
+ properties on it (or calling methods on it) so that we don't get an error. This is why you often see 
+ code that looks like this:
+
+
+// assuming object `user`
+
+let name = undefined;
+if (user.details && user.details.name && user.details.name.firstName) {
+    name = user.details.name.firstName;
+}
+We can't directly write let name = user.details.name.firstName if we suspect that, for some reason, 
+user.details might be null or undefined. And the same for user.details.name.
+This is why we use an if condition and check, step by step, that every property returns a value.
+
+Enter optional chaining. It lets us refactor the entire code above into the following:
+
+
+// assuming object `user`
+
+const name = user.details?.name?.firstName;
+So, yeah! All the code above can be replaced with this single line. Notice the ?. operator after
+ user.details and then after user.details?.name.
+
+This is called optional chaining which allows you to access a property deep within an object without 
+risking an error if one of the properties is null or undefined.
+In case one of the properties is null or undefined, then the ?. will short-circuit to undefined.
+This means that it will stop reading the property you asked it to read and will result in undefined.
+
+Let's take a look at some examples and see the result of optional chaining:
+
+
+const user = {
+    details: {
+        name: {
+            firstName: "Sam"
+        }
+    },
+    data: null
+}
+
+user.details?.name?.firstName; // "Sam"
+user.data?.id; // undefined
+user.children?.names; // undefined
+user.details?.parent?.firstName; // undefined
+MDN logoOptional chaining on MDN
+
+
+Caveats
+We decided to dedicate an entire chapter covering optional chaining because there are some edge cases 
+that you need to be aware of. We will break them down so that you avoid having unexpected issues.
+
+One important note is that you cannot use optional chaining on an object that may not exist. 
+The object has to exist. Optional chaining is only used to access a property that may or may not exist.
+
+This means when you access user.details?., you need to make sure that there is a variable (of any type)
+ called user. Otherwise, you get an error.
+
+You may have noticed that we've been writing user.details?.name instead of user?.details?.name that's 
+because we know for sure that user is an object. So we don't necessarily need optional chaining for 
+user.details.
+In case you're not sure whether user is an object, then you can write user?.details?.name. 
+However, you still have to make sure that there is a variable user defined, or else you will get an error.
+
+Recap
+Optional chaining allows you to access a property deep within an object without risking an error 
+if one of the properties is null or undefined.
+In case one of the properties is null or undefined, then the ?. will short-circuit to undefined.
+You cannot use optional chaining on an object that may not exist. The object has to exist. 
+Optional chaining is only used to access a property that may or may not exist.
+
+Optional chaining usage with arrays
+Assuming the code below, where the key temperatures might be undefined:
+
+
+const data = {
+    temperatures: [-3, 14, 4]
+}
+
+let firstValue = undefined;
+if (data.temperatures) {
+    firstValue = data.temperatures[0];
+}
+We can refactor it into:
+
+
+const firstValue = data.temperatures?.[0];
+Notice how we used ?. in front of the [0] to access the first item of the array. The benefit of optional 
+chaining here is that if data.temperatures returned null or undefined, your code won't break. 
+It will short-circuit and return undefined. Which is why we were able to get rid of the if condition.
+
+Optional chaining usage with functions
+Similarly, we can use optional chaining to call functions by using the ?. operator. Here's the example 
+before optional chaining:
+
+
+******Optional chaining (advanced)-----
+
+const person = {
+    age: 43,
+    name: "Sam"
+};
+
+let upperCasedName = person.name; // might be undefined
+if (person.name) {
+    upperCasedName = person.name.toUpperCase();
+}
+Which we can refactor into:
+
+
+const upperCasedName = person.name?.toUpperCase();
+This will only call the .toUpperCase() method if person.name does not evaluate to null or undefined.
+
+If at any point the code above is not clear, then wait until the challenges, and try running your code
+ without the if condition and without optional chaining and notice that it fails with errors such as
+  Cannot read property 'toUpperCase' of undefined.
+
+Optional chaining helps you avoid these errors by returning undefined.
+
+So, in the case where person.name is null or undefined, person.name?.toUpperCase() will short-circuit and
+ return undefined without calling the toUpperCase() method:
+
+
+const person = {
+    age: 43,
+};
+
+const upperCasedName = person.name?.toUpperCase(); // undefined
+Do not overuse optional chaining
+You might be tempted to start using optional chaining instead of every dot notation but you shouldn't. 
+Over-using it may lead to unexpected bugs and poor code quality.
+You can think of it as the following: When I (or other programmers) see ?. in the code, it means that
+ there's a moderate chance that the value returns undefined. In turn, this means that we should be handling 
+ the case when it returns undefined.
+
+For example, the below code does not handle many cases, such as an empty array:
+
+
+const sum = values => {
+    return values?.[0] + values?.[1];
+}
+
+sum([2, 3]); // 5
+sum([]); // NaN
+As you can see, even though our code doesn't break, sum([]) returns NaN which in turn might cause unexpected 
+issues later on.
+
+The above code can be fixed by adding an if condition that checks whether we have 2 entries in the values 
+array, otherwise, we return 0.
+
+If we go back to the example from the previous section, we didn't need ?.toUpperCase?.() here:
+
+
+const upperCasedName = person.name?.toUpperCase();
+This is because we assume that if the person.name exists, it will be a string. If it's a string, then 
+we'll have the toUpperCase() method. If you think that assumption doesn't make sense in your case, for
+ example, the name might exist but be a number, then you can use toUpperCase?.().
+
+Ideally, TypeScript can be used to handle these issues and enforce types in your code base.
+
+No optional chaining for assignment
+Optional chaining is only used for reading. It cannot be used for assignments.
+
+This means that the code below is invalid and will throw a syntax error:
+
+
+const settings = {};
+
+// ❌ Syntax Error
+settings?.theme = "dark";
+Instead, you could use the following syntax which combines optional chaining and the && logical operator:
+
+
+const settings = {};
+
+settings?.theme && (settings.theme = "dark");
+console.log(settings); // {}
+We're checking whether settings?.theme exists. This either returns undefined when it doesn't exist or the 
+value of settings.theme (which could be anything). The && will then force that value to be converted to a
+ boolean.
+
+If it's true, the right side of the expression will execute, setting the settings.theme to "dark". 
+Otherwise, when settings?.theme is undefined or null, the && operator will short-circuit and not run
+the right-side of its expression.
+
+This makes the settings?.theme && (settings.theme = "dark"); line of code safe regardless of the settings.
+theme value. Here's the opposite example where settings?.theme returns a truthy value:
+
+
+const settings = {
+     theme: "light"
+};
+
+settings?.theme && (settings.theme = "dark");
+console.log(settings); // {theme: "dark"}
+For this syntax to work, you have to specify the () around the right side of the operation; otherwise,
+ you will get an error because of the operator precedence order. So, without (), your code will execute as
+ if it was written like so:
+
+
+(settings?.theme && settings.theme) = "dark"; // ❌ this fails
+Recap
+Optional chaining can be used for arrays. The syntax is ?.[index]
+Optional chaining can be used for functions. The syntax is functionName?.()
+Optional chaining cannot be used for assignment. It's only used for reading.
+
+Chapter recap
+
+Last updated October 2022
+Great job! In the next chapter, we'll learn about the new nullish coalescing operator and then, we'll 
+use it in combination with optional chaining!
+
+Chapter Recap
+Optional chaining allows you to access a property deep within an object without risking an error if one of 
+the properties is null or undefined.
+In case one of the properties is null or undefined, then the ?. will short-circuit to undefined.
+You cannot use optional chaining on an object that may not exist. The object has to exist. Optional chaining 
+is only used to access a property that may or may not exist.
+Optional chaining can be used for arrays. The syntax is ?.[index]
+Optional chaining can be used for functions. The syntax is functionName?.()
+Optional chaining cannot be used for assignment. It's only used for reading.
+
+Nullish coalescing
+
+Last updated March 2022
+The nullish coalescing ?? operator is a new operator introduced in JavaScript that allows you to default to a certain value when the left-hand side is a nullish value.
+
+A nullish value is a value that is either null or undefined.
+
+Here's an example:
+
+
+const getName = name => {
+    return name ?? "N/A";
+}
+
+console.log(getName("Sam")); // "Sam"
+console.log(getName(undefined)); // "N/A"
+console.log(getName(null)); // "N/A"
+Notice how when name is a nullish value (either null or undefined), then the right-hand side of the
+ operator is executed. In this case, "N/A".
+
+This operator is useful to avoid showing undefined or null to the User Interface, which are often signs of bugs.
+Whenever possible, if you can provide a default value, you can use the nullish coalescing operator ?? to
+ show that default value.
+
+Some common examples include:
+
+Showing an empty string "" instead of undefined or null.
+Showing a string such as "Deleted user" instead of nullish value (undefined or null).
+Showing "N/A" (Not Applicable) instead of a nullish value.
+Short circuit
+The nullish coalescing operator will short-circuit if the left-hand side returns a non-nullish value.
+ This means that it will not execute the right-hand side. For example:
+
+
+const getPlaceholder = () => {
+    console.log("getPlaceholder called");
+    return "N/A";
+}
+
+const sayHello = name => {
+    return `Hello ${name ?? getPlaceholder()}`;
+}
+
+console.log(sayHello("Sam")); // "Hello Sam"
+In this example, name is a non-nullish value so the name ?? getPlaceholder() will short-circuit meaning 
+the getPlaceholder() function will not run. Thus, you won't see anything logged to the console.
+
+On the other hand, if we call sayHello() (where name is undefined), then the name ?? getPlaceholder()
+ will not short-circuit and the getPlaceholder() function will execute. Thus, you will see 
+ "getPlaceholder called" logged to the console.
+
+Variable must be defined
+Similar to optional chaining, you can only use nullish coalescing when the variable is defined.
+So, the variable name (or whatever variable you use to the left-hand side of the operator) has to be defined.
+
+MDN logoNullish coalescing operator on MDN
+
+
+Recap
+The nullish coalescing ?? operator is a new operator introduced in JavaScript that allows you to default
+ to a certain value when the left-hand side is a nullish value.
+A nullish value is a value that is either null or undefined.
+The nullish coalescing operator will short-circuit if the left-hand side returns a non-nullish value. 
+This means that it will not execute the right-hand side.
+You can only use nullish coalescing when the variable is defined.
+
+
 
 */ 
 
